@@ -24,6 +24,29 @@ function rename(oldPath, newPath, newTempPath, cb){
 };
 
 module.exports = {
+	like: function(req, res) {
+		var theId = parseInt(req.param('id'));
+		if (!theId) {
+			res.badRequest('Sorry, you need to tell us the ID of the FOO you want!');
+		} else {
+			Item.findOne(theId).exec(function(error, theItem){
+				if (error) {
+					return res.negotiate(error);
+				}
+				Item.find({
+					id: {
+						'!': theId
+					},
+					primaryType: theItem.primaryType,
+				}).exec(function(err, otherItem){
+					if (err) {
+						return res.negotiate(err);
+					}
+					return res.json(otherItem);
+				});
+			});
+		}
+	},
 
 	uploadForm: function (req,res){
 	    res.writeHead(200, {'content-type': 'text/html'});
@@ -91,6 +114,7 @@ module.exports = {
 
 		        	rename(anImage.fd, newFilePath, newTempPath, function(err, finalPath){
 		        		anItem.url = newURL;
+		        		anItem.primaryType = 'image';
 			        	anItem.save(function (saveErr, savedItem) {
 			        		if (error) {
 			        			res.send(500, {error: "DB Error"});

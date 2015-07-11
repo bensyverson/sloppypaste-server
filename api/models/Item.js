@@ -13,6 +13,22 @@ module.exports = {
   	url: {
   		type: 'string',
   	},
-  }
+  	primaryType: {
+  		type: 'string',
+  		enum: ['image', 'text', 'url', 'invalid'],
+  	},
+  },
+	beforeValidate: function(values, cb) {
+	    if (values.text) {
+	    	if (values.text.match(/^https?:\/\//)) {
+	    		values.primaryType = 'url';
+	    	} else {
+	    		values.primaryType = 'text';
+	    	}
+	    } else {
+	    	values.primaryType = 'invalid';
+	    }
+  		cb();
+  	},
 };
 

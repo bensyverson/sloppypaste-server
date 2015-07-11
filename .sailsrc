@@ -1,5 +1,8 @@
 {
-  "generators": {
-    "modules": {}
-  }
+	"generators": {
+		"modules": {}
+	},
+  	"command": {
+		"deploy": "sails-deploy"
+	}
 }
